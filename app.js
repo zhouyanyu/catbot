@@ -15,24 +15,45 @@ bot.onText(/\/givemepics/,(msg)=>{
   let pics;
   PicsModel.find()
   .then(allPics=>{
-    pics = allPics
-    let z = pics.length;
-    console.log(pics[Math.floor(Math.random()*z)].uniUrl)
-    bot.sendPhoto(msg.chat.id, pics[Math.floor(Math.random()*z)].url);
+    if(allPics.length == 0){
+      bot.sendMessage(msg.chat.id, '图库里貌似还没有猫片儿');
+    }else{
+      pics = allPics.length;
+      bot.sendMessage(msg.chat.id, '奴才在！😽o(=•ェ•=)');
+      bot.sendPhoto(msg.chat.id, allPics[Math.floor(Math.random()*pics)].url);
+    }
+})
 })
 
-    bot.sendMessage(msg.chat.id, '奴才在！😽o(=•ェ•=)');
+bot.onText(/\/count/,msg=>{
+  PicsModel.find()
+  .then(countPics=>{
+    bot.sendMessage(msg.chat.id, '现在图库共有'+countPics.length+'张照片');
+  })
 })
 
+bot.onText(/\/lately/,(msg)=>{
+  PicsModel.find().limit(3).sort({ date: -1})
+  .then(latelyPics=>{
+    console.log(latelyPics)
+    latelyPics.forEach(latelyPic=>{
+      bot.sendPhoto(msg.chat.id, latelyPic.url);
+    })
+  })
+})
 
 bot.on('photo',msg=>{
-  console.log(msg.photo[0].file_unique_id)
+  // console.log(msg.photo[0].file_unique_id)
   if(msg.from.id == 581117238){
     PicsModel.findOne({uniUrl:msg.photo[0].file_unique_id})
     .then(resultPic=>{
-      console.log(resultPic)
+      // console.log(resultPic)
       if(!resultPic){
-        const pics = new PicsModel({url:msg.photo[0].file_id,uniUrl:msg.photo[0].file_unique_id});
+        const pics = new PicsModel({
+          url:msg.photo[0].file_id,
+          uniUrl:msg.photo[0].file_unique_id,
+          date:msg.date
+        });
         pics.save(err=>{
           if(err){
             return handleError(err)
@@ -51,10 +72,10 @@ bot.on('photo',msg=>{
 
 bot.onText(/\/del/,msg=>{
   if(msg.reply_to_message && msg.from.id == 581117238){
-    console.log(msg.reply_to_message.photo[0].file_unique_id)
+    // console.log(msg.reply_to_message.photo[0].file_unique_id)
     PicsModel.findOne({uniUrl:msg.reply_to_message.photo[0].file_unique_id})
     .then(delPic=>{
-      console.log(delPic)
+      // console.log(delPic)
       PicsModel.remove(delPic)
       .then(()=>{
         bot.sendMessage(msg.chat.id, '皂片已删除',{reply_to_message_id:msg.message_id});
@@ -68,20 +89,5 @@ bot.onText(/\/del/,msg=>{
 bot.onText(/\/start/,msg=>{
   bot.sendMessage(msg.chat.id, '试试下面的斜杠命令，比如说 /givemepics 来获取一些猫片儿');
 })
-// bot.on('message',msg=>{
-//   if(msg.reply_to_message && msg.from.id == 581117238){
-//     bot.onText(/\/del/,msg=>{
-//       console.log(msg.reply_to_message.photo[0].file_id)
-//       PicsModel.findOne({url:msg.reply_to_message.photo[0].file_id})
-//       .then(delPic=>{
-//         console.log(delPic)
-//         // PicsModel.remove(delPic)
-//         // .then(()=>{
-//         //   bot.sendMessage(msg.chat.id, '皂片已删除',{reply_to_message_id:msg.message_id});
-//         // })
-//       })
-//     })
-//   }
-// })
 
 

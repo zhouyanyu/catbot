@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const PicsModelSchema = new Schema({
     url:String,
-    uniUrl:String
+    uniUrl:String,
+    date:String
 })
 
 const PicsModel = mongoose.model('pics',PicsModelSchema)
