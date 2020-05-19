@@ -1,10 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
-const token = '1224803411:AAGWXbhrTg2LzIAALuR6GvxndhCma6OIkZY'
-// const token = '1211293764:AAGtGYuSHRnj0HiKg27ZN4j6q0rjjLpxhZg'
-const bot = new TelegramBot(token, {polling: true});
+const userInfo = require('./config/userinfo')
+const bot = new TelegramBot(userInfo.botToken, {polling: true});
 
 const mongoose = require('mongoose');
-const mongoDB = 'mongodb://localhost/catbot';
+const mongoDB = userInfo.mongodbUrl;
 const db = mongoose.connect(mongoDB)
   .then(()=>console.log('数据库已连接'))
   .catch(err=>console.log(err))
@@ -66,6 +65,9 @@ bot.onText(/\/del/,msg=>{
   }
 })
 
+bot.onText(/\/start/,msg=>{
+  bot.sendMessage(msg.chat.id, '试试下面的斜杠命令，比如说 /givemepics 来获取一些猫片儿');
+})
 // bot.on('message',msg=>{
 //   if(msg.reply_to_message && msg.from.id == 581117238){
 //     bot.onText(/\/del/,msg=>{
