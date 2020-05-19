@@ -35,7 +35,7 @@ bot.onText(/\/count/,msg=>{
 bot.onText(/\/lately/,(msg)=>{
   PicsModel.find().limit(3).sort({ date: -1})
   .then(latelyPics=>{
-    console.log(latelyPics)
+    // console.log(latelyPics)
     latelyPics.forEach(latelyPic=>{
       bot.sendPhoto(msg.chat.id, latelyPic.url);
     })
@@ -88,6 +88,10 @@ bot.onText(/\/del/,msg=>{
 
 bot.onText(/\/start/,msg=>{
   bot.sendMessage(msg.chat.id, '试试下面的斜杠命令，比如说 /givemepics 来获取一些猫片儿');
+})
+
+bot.onText(/\/help/,msg=>{
+  bot.sendMessage(msg.chat.id, '帮助： \n /givemepics 随机来点儿猫片儿 \n /count 查看图库共有多少皂片 \n /lately 查看最近三张皂片 \n /del 回复删除图库皂片[管理员命令] \n 直接发送照片填充图库皂片[管理员命令]');
 })
 
 
