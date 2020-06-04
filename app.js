@@ -1,6 +1,9 @@
+process.env["NTBA_FIX_319"] = 1;
 const TelegramBot = require('node-telegram-bot-api');
 const userInfo = require('./config/userinfo')
 const bot = new TelegramBot(userInfo.botToken, {polling: true});
+const express = require('express')
+const app = express()
 
 const mongoose = require('mongoose');
 const mongoDB = userInfo.mongodbUrl;
@@ -94,4 +97,7 @@ bot.onText(/\/help/,msg=>{
   bot.sendMessage(msg.chat.id, '帮助： \n /givemepics 随机来点儿猫片儿 \n /count 查看图库共有多少皂片 \n /lately 查看最近三张皂片 \n /del 回复删除图库皂片[管理员命令] \n 直接发送照片填充图库皂片[管理员命令]');
 })
 
-
+app.get('/',(req,res)=>{
+  res.send('bot')
+})
+app.listen(3000)
